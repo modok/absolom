@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/absolom.alfa.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<title>B R!</title>
+<style type="text/css">
+	* {font-family:Arial;}
+	body {background:#fff;color:#000;margin:0;padding:0;}
+	h1 {margin:20px;}
+	hr {border:0;margin:0;padding:0;background:#fff; height:1px;}
+	button {font-size:14px;}
+	
+	#container {background:#fff;margin:20px; width:700px;padding:20px;}
+	#buttons {text-align:center;}
+	#field {padding:20px;border-radius:10px;background:darkred;margin:10px;clear:both;}
+	#starterStand {position:relative;float:left;}
+	
+	.lane {position:relative;height:80px;}
+	.runner , 
+	.starter , 
+	.supporter 
+	{height:60px;width:60px;margin:10px 0;}
+	.supporter {float:left;margin:0 10px;}
+	.balloon {position:absolute;top:-60px;left:50px;background:#fff; width:200px;height:60px;border:1px solid #fff;box-shadow:0 0 10px 0 #333;border-radius:20px;}
+	.runner {position:absolute;}
+	
+	#blue {background:blue}
+	#green {background:green}
+	#purple {background:purple}
+	
+</style>
+<script type="text/javascript">
+	
+	var runner = function (dom) {
+		Absolom.bornToBeFriend(this, dom.attr('id'));
+		this.teachesAbsolomThat({when:"ready"});		
+		var $dom = dom;
+		var fieldWidth = $dom.parents('#field').width();
+		var speed = 0;
+		this.run = function () {
+			if($dom.position().left > fieldWidth)
+				this.tellsAbsolom("finished");
+			
+			var s = $dom.position().left + (speed * 0.1);
+			$dom.css({"left": s + "px"});
+			
+		};
+		this.ready = function () {
+			$dom.css({"left":0});
+			speed = Math.random() * 5 + 10;
+		};
+
+		this.ready();
+	};
+	var starter = function () {
+	
+	};
+	var supporter = function () {
+	
+	};
+	var race = function (dom) {
+		Absolom.bornToBeFriend(this, "field");
+		this.teachesAbsolomThat({when:"go"});
+		this.teachesAbsolomThat({when:"finished"});
+		this.teachesAbsolomThat({when:"ready", does:"finished"});
+		this.width = dom.width;
+		this.go = function () { isRunning = true; running();};
+		this.finished = function () { isRunning = false;};
+		
+		var isRunning = false;
+		var running = function () {
+			if(!isRunning)
+				return;
+			
+			$('.runner').each(function() {$(this).data('runner').run();});
+				
+			setTimeout(running, 1000/60);
+		};
+	};
+	
+	$(function() {
+
+		$('#field').each(function() {
+			$(this).data('field', new race($(this)));
+		});
+		$('.runner').each(function() {
+			$(this).data('runner', new runner($(this)));
+		});
+		$('#btn_start').click(function() {
+			Absolom.shouts("go");
+		});
+		$('#btn_restart').click(function() {
+			Absolom.shouts("ready");
+		});
+	});
+</script>
+</head>
+<body>
+	<h1>Bubble Race</h1>
+	<div id="container" class="cf">
+		<div id="starterStand">
+			<div class="balloon"></div>
+			<div class="starter" id="black"></div>
+		</div>
+		<div id="stands">
+			<div class="supporter" id="s_blue"></div>
+			<div class="supporter" id="s_green"></div>
+			<div class="supporter" id="s_purple"></div>
+		</div>
+		<div id="field">
+			<hr />
+			<div class="lane">
+				<div class="runner" id="blue"></div>
+			</div>
+			<hr />
+			<div class="lane">
+				<div class="runner" id="green"></div>
+			</div>
+			<hr />
+			<div class="lane">
+				<div class="runner" id="purple"></div>
+			</div>
+			<hr />
+		</div>
+		<div id="buttons">
+			<button id="btn_start">start</button> <button id="btn_restart">reset</button>
+		</div>
+	</div>
+</body>
+</html>

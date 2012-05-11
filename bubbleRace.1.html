@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/absolom.alfa.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<title>B R!</title>
+<style type="text/css">
+	* {font-family:Arial;}
+	body {background:#fff;color:#000;margin:0;padding:0;}
+	h1 {margin:20px;}
+	hr {border:0;margin:0;padding:0;background:#fff; height:1px;}
+	button {font-size:14px;}
+	
+	#buttons {text-align:center;}
+	#container {background:#fff;width:700px;}
+	#field {padding:20px;border-radius:10px;background:darkred;margin:10px;clear:both;}
+	
+	.lane {position:relative;height:80px;}
+	.runner {height:60px;width:60px;margin:10px 0;}
+	.runner {position:absolute;}
+	
+	#blue {background:blue}
+	#green {background:green}
+	#purple {background:purple}
+	
+</style>
+<script type="text/javascript">
+	
+	var runner = function (dom) {
+		_A_.friendWith(this, dom.attr('id'));
+		this.saysA({when:"ready"});
+		this.saysA({when:"run"});		
+		var $dom = dom;
+		var fieldWidth = $dom.parents('#field').width();
+		var speed = 0;
+		this.run = function () {
+			if($dom.position().left > fieldWidth)
+				_A_.shouts("finished");
+			
+			var s = $dom.position().left + (speed * 0.1);
+			$dom.css({"left": s + "px"});
+			
+		};
+		this.ready = function () {
+			$dom.css({"left":0});
+			speed = Math.random() * 5 + 10;
+		};
+
+		this.ready();
+	};
+	var race = function (dom) {
+		_A_.friendWith(this, "field");
+		this.saysA({when:"go"});
+		this.saysA({when:"finished"});
+		this.saysA({when:"ready", does:"finished"});
+
+		this.width = dom.width;
+		this.go = function () { isRunning = true; running();};
+		this.finished = function () { isRunning = false;};
+		
+		var isRunning = false;
+		var running = function () {
+			if(!isRunning)
+				return;
+			
+			_A_.shouts('run');
+				
+			setTimeout(running, 1000/60);
+		};
+	};
+	
+	$(function() {
+
+		$('#field').each(function() {
+			$(this).data('field', new race($(this)));
+		});
+		$('.runner').each(function() {
+			$(this).data('runner', new runner($(this)));
+		});
+		$('#btn_start').click(function() {
+			_A_.shouts("go");
+		});
+		$('#btn_restart').click(function() {
+			_A_.shouts("ready");
+		});
+	});
+</script>
+</head>
+<body>
+	<div id="container" class="cf">
+		<div id="field">
+			<hr />
+			<div class="lane">
+				<div class="runner" id="blue"></div>
+			</div>
+			<hr />
+			<div class="lane">
+				<div class="runner" id="green"></div>
+			</div>
+			<hr />
+			<div class="lane">
+				<div class="runner" id="purple"></div>
+			</div>
+			<hr />
+		</div>
+		<div id="buttons">
+			<button id="btn_start">start</button> <button id="btn_restart">reset</button>
+		</div>
+	</div>
+</body>
+</html>

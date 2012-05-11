@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/absolom.alfa.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<title>B R!</title>
+<style type="text/css">
+	* {font-family:Arial;}
+	body {background:#fff;color:#000;margin:0;padding:0;}
+	h1 {margin:20px;}
+	hr {border:0;margin:0;padding:0;background:#fff; height:1px;}
+	button {font-size:14px;}
+	
+	#container {background:#fff;margin:46px 0 0; width:700px;padding:20px 0 0;}
+	#buttons {text-align:center;}
+	#field {padding:20px;border-radius:10px;background:darkred;margin:10px;clear:both;}
+	#starterStand, #stands {position:relative;float:left;width:40%;}
+	
+	.lane {position:relative;height:80px;}
+	.runner , 
+	.supporter , 
+	.starter {height:60px;width:60px;margin:10px 0;}
+	.balloon {position:absolute;top:-60px;left:50px;background:#fff; width:200px;height:20px;border:1px solid #fff;box-shadow:0 0 10px 0 #333;border-radius:20px;padding:10px;text-transform:capitalize;}
+	.balloon.mini {top:-60px;left:0px;width:50px;}
+	
+	.supporter {float:right; margin:10px;position:relative;}
+	.runner {position:absolute;}
+	
+	
+	#blue, #s_blue {background:blue}
+	#green, #s_green {background:green}
+	#purple, #s_purple {background:purple}
+	#black {background:black}
+	
+</style>
+<script type="text/javascript">
+	
+	var runner = function (dom) {
+		_A_.friendWith(this, dom.attr('id'));
+		this.saysA({when:"ready"});
+		this.saysA({when:"run"});
+		this.saysA({when:"partial", does:"finalrush"});		
+
+		var $dom = dom;
+		var fieldWidth = $dom.parents('#field').width();
+		var speed = 0;
+		this.run = function () {
+			if($dom.position().left > fieldWidth)
+				this.shouts("finished");
+
+			if($dom.position().left > (fieldWidth /2))
+				this.shouts("partial");
+				
+			var s = $dom.position().left + (speed * 0.1);
+			$dom.css({"left": s + "px"});
+			
+		};
+		this.ready = function () {
+			$dom.css({"left":0});
+			speed = Math.random() * 2 + 10;
+		};
+		this.finalrush = function () {
+			speed = Math.random() * 20 + 10;
+		};
+
+		this.ready();
+	};
+	var starter = function (dom) {
+		_A_.friendWith(this, dom.attr('id'));
+		this.saysA({when:"finished"});
+		this.saysA({when:"go"});
+		this.saysA({when:"ready"});
+		this.saysA({when:"partial"});
+		var $dom = dom;
+
+		this.finished = function (obj) {
+			$('.balloon').html(obj.scope.wname + " wins!");
+		};
+		this.partial = function (obj) {
+			_A_.forgets({about:this, when:"partial"});
+			$('.balloon').html(obj.scope.wname + " is in the lead!");
+		};
+
+		this.ready = function () {
+			$('.balloon').html('Ready...');
+			this.saysA({when:"partial"});
+		};
+		this.go = function () {
+			$('.balloon').html('GO!!!');
+		};	
+	};
+	var supporter = function (dom) {
+		_A_.friendWith(this, dom.attr('id'));
+		this.saysA({when:"isReady"});
+		this.saysA({when:"finished"});
+		this.saysA({when:"go"});
+		this.saysA({when:"ready"});
+		this.saysA({when:"partial"});
+		var $dom = dom;
+		var supporterFor = $dom.data('id');
+
+		this.isReady = function() {
+			this.shouts('go');
+		};
+		this.finished = function (obj) {
+			if(obj.scope.wname == supporterFor)
+				$dom.children().html("YEEE!");
+			else 
+				$dom.children().html('..sigh..');
+		};
+		this.partial = function (obj) {
+			_A_.forgets({about:this, when:"partial"});
+			if(obj.scope.wname == supporterFor)
+				$dom.children().html('YEE!');
+			else
+				$dom.children().html('GOOO!');
+			
+		};
+
+		this.ready = function () {
+			$dom.children().html('yee');
+			this.saysA({when:"partial"});
+		};
+		this.go = function () {
+			$dom.children().html('GOO!');
+		};	
+	};
+	var race = function (dom) {
+		_A_.friendWith(this, "field");
+		this.saysA({when:"go"});
+		this.saysA({when:"finished"});
+		this.saysA({when:"ready", does:"finished"});
+	
+		this.width = dom.width;
+		this.go = function () { isRunning = true; running();};
+		this.finished = function () { isRunning = false;};
+		
+		var isRunning = false;
+		var running = function () {
+			if(!isRunning)
+				return;
+
+			_A_.shouts('run');
+				
+			setTimeout(running, 1000/60);
+		};
+
+		
+	};
+	
+	$(function() {
+
+		$('#field').each(function() {
+			$(this).data('field', new race($(this)));
+		});
+		$('.starter').each(function() {
+			$(this).data('starter', new starter($(this)));
+		});
+		$('.supporter').each(function() {
+			$(this).data('supporter', new supporter($(this)));
+		});
+		$('.runner').each(function() {
+			$(this).data('runner', new runner($(this)));
+		});
+		$('#btn_start').click(function() {
+			_A_.shouts("isReady");
+		});
+		$('#btn_restart').click(function() {
+			_A_.shouts("ready");
+		});
+	});
+</script>
+</head>
+<body>
+	<div id="container" class="cf">
+		<div id="starterStand">
+			<div class="balloon">Ready...</div>
+			<div class="starter" id="black"></div>
+		</div>
+		<div id="stands">
+			<div class="supporter" id="s_blue" data-id="blue"><div class="balloon mini"></div></div>
+			<div class="supporter" id="s_green" data-id="green"><div class="balloon mini"></div></div>
+			<div class="supporter" id="s_purple" data-id="purple"><div class="balloon mini"></div></div>
+		</div>
+		<div id="field">
+			<hr />
+			<div class="lane">
+				<div class="runner" id="blue"></div>
+			</div>
+			<hr />
+			<div class="lane">
+				<div class="runner" id="green"></div>
+			</div>
+			<hr />
+			<div class="lane">
+				<div class="runner" id="purple"></div>
+			</div>
+			<hr />
+		</div>
+		<div id="buttons">
+			<button id="btn_start">start</button> <button id="btn_restart">reset</button>
+		</div>
+	</div>
+</body>
+</html>

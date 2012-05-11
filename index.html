@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html data-clue="Follow the white rabbit in the head tag">
+<head data-clue="Look for a clue in the title tag!">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="js/absolom.alfa.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<title data-clue="pssst in the script below!">Absolom a wonderful story!</title>
+<script type="text/javascript">
+	var docHeight,
+		docWidth;
+
+	/** 
+		Here we have a generic wonderland traveler.
+		A typical one loves cookies and takes them when there are.
+		Only Absolom knows when a cookie comes in wonderland.
+		A wonderland traveler needs to be Absolom's friend to know it,
+		but not all wonderland travelers are so lucky!
+	*/
+	var wonderlandtraveler = function (name) {
+		Absolom.bornToBeFriend(this, name);
+		var self = this;
+		this.tellsAbsolomThat({when:"orsetto"});
+		var dom;
+		this.orsetto = function() {
+			if(!!window.console)
+				console.log('orsetto!');
+		};
+		this.takeCookies = function(obj) {
+			if($('#ck').length == 0) {
+				if(!!window.console)
+					if(!!obj && obj.scope === this) {
+						console.log('...Meanwhile in wonderland there aren\'t cookies...');
+						console.log(this.wname + ' says: ...sorry guys, my mistake!');
+					}
+					else
+						console.log(this.wname + ' shouts: WHERE ARE MY COOKIES! YOU LIAR!');
+				return;
+			}
+
+			var top = $('#ck').position().top.toFixed(0);
+			var left = $('#ck').position().left.toFixed(0);
+
+			$('#ck_' + this.wname).animate({top:top,left:left}); 
+		};
+		this.cookies = function(obj) {
+			this.takeCookies(obj);
+		};
+		this.does = function(args) {
+			if(!!window.console)
+				console.log(this.wname + " " + args.text);
+		};
+		this.comes = function () {
+			var img;
+
+			switch (this.wname) {
+			case 'alice':
+				img = 'http://2.bp.blogspot.com/_dMysNGSLPRc/TI8jsJhQm9I/AAAAAAAAA4o/QnEO4ZYy9gw/s1600/alice2.jpg';
+				break;
+			case 'bianconiglio':
+				img = 'http://images.wikia.com/kingdomhearts/images/8/80/White_Rabbit_KHREC.png';
+				break;
+			case 'cheshirecat':
+				img = 'http://makeupbybrittanylauren.files.wordpress.com/2012/03/cheshire-cat-4.jpeg';
+				break;
+			}
+			var top = docHeight - (Math.random() * (docHeight / 2)) - (docHeight / 2);
+			var left = docWidth - (Math.random() * (docWidth / 2)) - (docWidth / 2);
+			if (typeof dom === 'undefined')
+				dom = $('<img src="' + img + '" id="ck_' + this.wname + '" width="80" style="position:absolute;top:' + top + 'px;left:' + left + 'px;z-index:2" />');
+
+			dom.detach();
+			dom.appendTo('body');
+
+		};
+		
+		this.comes();
+	};
+
+	/* loitering in multiverse we have three guys...*/
+	var alice;
+	var bianconiglio;
+	var cheshirecat;
+	
+
+	$(function() {
+
+		/* here starts our story... */
+		docHeight = $(document).height();
+		docWidth = $(document).width();
+		
+		$('#callFriends').click(function() {
+			/* someone, maybe a god, summons our three guys in wonderland and they become wonderland traveler */
+			if(!alice) {
+				alice = new wonderlandtraveler("alice");
+				bianconiglio = new wonderlandtraveler("bianconiglio");
+				cheshirecat = new wonderlandtraveler("cheshirecat");
+				/* loitering in wonderland they start to be hungry, but they meet Absolom and he decides to make friends with all of them */
+				//Absolom.makeFriends([alice, bianconiglio, cheshirecat]);
+			
+				/* Absolom spends few times with them and learns they like to know when cookies arrived in wonderland because they love them and want to eat them all!*/
+				Absolom.learns({that:alice, when:"cookies"});
+				Absolom.learns({that:bianconiglio, when:"cookies", does:bianconiglio.takeCookies});
+				Absolom.learns({that:cheshirecat, when:"cookies", does:"takeCookies"});
+			}
+		});
+
+		/* After a while someone, maybe a god, decides to buy few cookies but he loses them somewhere in wonderland*/
+		
+		$('#cookies').click(function () {
+			$('#ck').remove();
+			var top = $(document).height() - (Math.random() * ($(document).height() / 2));
+			var left = $(document).width() - (Math.random() * ($(document).width() / 2));
+			$('body').append('<img src="http://www.illustrationsof.com/royalty-free-cookie-clipart-illustration-94452.jpg" id="ck" width="80" style="position:absolute;top:' + top + 'px;left:' + left + 'px;" />');
+		});
+
+		/* But there's no secret for Absolom and he knows that now cookies are in wonderland and he knows where */
+		
+		$('#cookieeeees').click(function() {
+			if($('#ck_alice').length == 0 || $('#ck_bianconiglio').length == 0 || $('#ck_cheshirecat').length == 0 ) {
+				if(!!window.console)
+					console.log('no travelers in wonderland, call them!');
+
+				return;
+			}
+			/* kindly he shouts all around wonderland that cookies are here, in this way people who cares can decide to do...*/
+			Absolom.shouts("cookies");
+		});
+		
+		
+	});
+</script>
+</head>
+<body>
+	<p>Absolom is a dispatcher, nothing more, nothing less.</p>
+	<p>I wrote a story with it, a silly one indeed, but the story proves a few of the potentiality...at least i hope so.</p>
+	<p>To better understand this story have a look to source code and if you have one, open your browser console.</p>
+	<p>The code is simple on purpose and doesn't show a real and sharp implementation of it, but it's easy to understand specially if you are not used to work with javascript or observer design pattern.</p>
+	<p>To see a serious documentation of Absolom click here</p>
+	<button id="callFriends">summons wonderland travelers</button> <button id="cookies">buy cookies!</button> <button id="cookieeeees">Absolom, tell to who cares we have cookies!</button>
+</body>
+</html>
